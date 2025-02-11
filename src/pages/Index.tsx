@@ -30,56 +30,106 @@ import {
 } from "@/components/ui/alert-dialog";
 import { useToast } from "@/hooks/use-toast";
 import { Search, Plus } from "lucide-react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 
 const Index = () => {
-  const [contacts, setContacts] = useState<Contact[]>(getContacts());
   const [searchQuery, setSearchQuery] = useState("");
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [selectedContact, setSelectedContact] = useState<Contact | null>(null);
   const { toast } = useToast();
+  const queryClient = useQueryClient();
 
-  const handleSearch = (query: string) => {
-    setSearchQuery(query);
-    const results = query ? searchContacts(query) : getContacts();
-    setContacts(results);
-  };
+  const { data: contacts = [], isLoading } = useQuery({
+    queryKey: ['contacts', searchQuery],
+    queryFn: () => searchQuery ? searchContacts(searchQuery) : getContacts(),
+  });
 
-  const handleAddContact = (data: ContactFormData) => {
-    const newContact = addContact(data);
-    setContacts(getContacts());
-    setIsAddModalOpen(false);
-    toast({
-      title: "Contact Added",
-      description: `${data.fullName} has been added to your contacts.`,
-    });
-  };
+  const addContactMutation = useMutation({
+    mutationFn: addContact,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['contacts'] });
+      setIsAddModalOpen(false);
+      toast({
+        title: "Contact Added",
+        description: "The contact has been added successfully.",
+      });
+    },
+    onError: (error) => {
+      toast({
+        title: "Error",
+        description: "Failed to add contact. Please try again.",
+        variant: "destructive",
+      });
+      console.error("Add contact error:", error);
+    },
+  });
 
-  const handleEditContact = (data: ContactFormData) => {
-    if (selectedContact) {
-      updateContact(selectedContact.id, data);
-      setContacts(getContacts());
+  const updateContactMutation = useMutation({
+    mutationFn: ({ id, data }: { id: string; data: Partial<Contact> }) =>
+      updateContact(id, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['contacts'] });
       setIsEditModalOpen(false);
       setSelectedContact(null);
       toast({
         title: "Contact Updated",
-        description: `${data.fullName}'s information has been updated.`,
+        description: "The contact has been updated successfully.",
+      });
+    },
+    onError: (error) => {
+      toast({
+        title: "Error",
+        description: "Failed to update contact. Please try again.",
+        variant: "destructive",
+      });
+      console.error("Update contact error:", error);
+    },
+  });
+
+  const deleteContactMutation = useMutation({
+    mutationFn: deleteContact,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['contacts'] });
+      setIsDeleteDialogOpen(false);
+      setSelectedContact(null);
+      toast({
+        title: "Contact Deleted",
+        description: "The contact has been deleted successfully.",
+        variant: "destructive",
+      });
+    },
+    onError: (error) => {
+      toast({
+        title: "Error",
+        description: "Failed to delete contact. Please try again.",
+        variant: "destructive",
+      });
+      console.error("Delete contact error:", error);
+    },
+  });
+
+  const handleSearch = (query: string) => {
+    setSearchQuery(query);
+  };
+
+  const handleAddContact = (data: ContactFormData) => {
+    addContactMutation.mutate(data);
+  };
+
+  const handleEditContact = (data: ContactFormData) => {
+    if (selectedContact) {
+      updateContactMutation.mutate({
+        id: selectedContact.id,
+        data,
       });
     }
   };
 
   const handleDeleteContact = () => {
     if (selectedContact) {
-      deleteContact(selectedContact.id);
-      setContacts(getContacts());
-      setIsDeleteDialogOpen(false);
-      toast({
-        title: "Contact Deleted",
-        description: `${selectedContact.fullName} has been removed from your contacts.`,
-        variant: "destructive",
-      });
-      setSelectedContact(null);
+      deleteContactMutation.mutate(selectedContact.id);
     }
   };
 
@@ -114,31 +164,37 @@ const Index = () => {
               </Button>
             </div>
 
-            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-              {contacts.map((contact) => (
-                <ContactCard
-                  key={contact.id}
-                  contact={contact}
-                  onEdit={() => {
-                    setSelectedContact(contact);
-                    setIsEditModalOpen(true);
-                  }}
-                  onDelete={() => {
-                    setSelectedContact(contact);
-                    setIsDeleteDialogOpen(true);
-                  }}
-                />
-              ))}
-              {contacts.length === 0 && (
-                <div className="col-span-full text-center py-12">
-                  <p className="text-muted-foreground">
-                    {searchQuery
-                      ? "No contacts found matching your search"
-                      : "No contacts yet. Add your first contact!"}
-                  </p>
-                </div>
-              )}
-            </div>
+            {isLoading ? (
+              <div className="text-center py-12">
+                <p className="text-muted-foreground">Loading contacts...</p>
+              </div>
+            ) : (
+              <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+                {contacts.map((contact) => (
+                  <ContactCard
+                    key={contact.id}
+                    contact={contact}
+                    onEdit={() => {
+                      setSelectedContact(contact);
+                      setIsEditModalOpen(true);
+                    }}
+                    onDelete={() => {
+                      setSelectedContact(contact);
+                      setIsDeleteDialogOpen(true);
+                    }}
+                  />
+                ))}
+                {contacts.length === 0 && (
+                  <div className="col-span-full text-center py-12">
+                    <p className="text-muted-foreground">
+                      {searchQuery
+                        ? "No contacts found matching your search"
+                        : "No contacts yet. Add your first contact!"}
+                    </p>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
 
           <Dialog open={isAddModalOpen} onOpenChange={setIsAddModalOpen}>
