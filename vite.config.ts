@@ -7,6 +7,7 @@ export default defineConfig({
   server: {
     port: 8080,
     allowedHosts: ['55003fe8-0e03-4b93-936e-0392808b880e.lovableproject.com'], // Add this line
+    host:true,
   },
   resolve: {
     alias: {
