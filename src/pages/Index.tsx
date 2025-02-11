@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import { Contact, ContactFormData } from "@/types/contact";
 import {
@@ -217,7 +218,7 @@ const Index = () => {
             {selectedContact && (
               <ContactForm
                 onSubmit={handleEditContact}
-                defaultValues={selectedContact}
+                initialData={selectedContact}
               />
             )}
           </DialogContent>

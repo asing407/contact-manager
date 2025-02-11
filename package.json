@@ -1,5 +1,6 @@
 {
   "dependencies": {
-    "@supabase/supabase-js": "^2.48.1"
+    "@supabase/supabase-js": "^2.48.1",
+    "@vitejs/plugin-react": "^4.3.4"
   }
 }
