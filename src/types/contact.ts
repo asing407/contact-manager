@@ -1,5 +1,6 @@
 
 export interface SocialMedia {
+  [key: string]: string | undefined;
   linkedin?: string;
   twitter?: string;
   facebook?: string;

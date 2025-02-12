@@ -1,6 +1,7 @@
 
 import { Contact } from "@/types/contact";
 import { supabase } from "@/integrations/supabase/client";
+import { Json } from "@/integrations/supabase/types";
 
 export const getContacts = async () => {
   const { data, error } = await supabase
@@ -26,15 +27,15 @@ export const getContact = async (id: string) => {
 export const addContact = async (contact: Omit<Contact, "id" | "createdAt" | "updatedAt">) => {
   const { data, error } = await supabase
     .from('contacts')
-    .insert([{
+    .insert({
       full_name: contact.fullName,
       email: contact.email,
       phone: contact.phone,
       address: contact.address,
       notes: contact.notes,
       birthday: contact.birthday,
-      social_media: contact.socialMedia
-    }])
+      social_media: contact.socialMedia as Json
+    })
     .select()
     .single();
 
@@ -43,17 +44,19 @@ export const addContact = async (contact: Omit<Contact, "id" | "createdAt" | "up
 };
 
 export const updateContact = async (id: string, contact: Partial<Contact>) => {
+  const updateData: Record<string, any> = {};
+  
+  if (contact.fullName !== undefined) updateData.full_name = contact.fullName;
+  if (contact.email !== undefined) updateData.email = contact.email;
+  if (contact.phone !== undefined) updateData.phone = contact.phone;
+  if (contact.address !== undefined) updateData.address = contact.address;
+  if (contact.notes !== undefined) updateData.notes = contact.notes;
+  if (contact.birthday !== undefined) updateData.birthday = contact.birthday;
+  if (contact.socialMedia !== undefined) updateData.social_media = contact.socialMedia as Json;
+
   const { data, error } = await supabase
     .from('contacts')
-    .update({
-      full_name: contact.fullName,
-      email: contact.email,
-      phone: contact.phone,
-      address: contact.address,
-      notes: contact.notes,
-      birthday: contact.birthday,
-      social_media: contact.socialMedia
-    })
+    .update(updateData)
     .eq('id', id)
     .select()
     .single();
