@@ -12,32 +12,38 @@ export type Database = {
       contacts: {
         Row: {
           address: string | null
+          birthday: string | null
           created_at: string
           email: string
           full_name: string
           id: string
           notes: string | null
           phone: string
+          social_media: Json | null
           updated_at: string
         }
         Insert: {
           address?: string | null
+          birthday?: string | null
           created_at?: string
           email: string
           full_name: string
           id?: string
           notes?: string | null
           phone: string
+          social_media?: Json | null
           updated_at?: string
         }
         Update: {
           address?: string | null
+          birthday?: string | null
           created_at?: string
           email?: string
           full_name?: string
           id?: string
           notes?: string | null
           phone?: string
+          social_media?: Json | null
           updated_at?: string
         }
         Relationships: []

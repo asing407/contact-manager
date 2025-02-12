@@ -31,7 +31,9 @@ export const addContact = async (contact: Omit<Contact, "id" | "createdAt" | "up
       email: contact.email,
       phone: contact.phone,
       address: contact.address,
-      notes: contact.notes
+      notes: contact.notes,
+      birthday: contact.birthday,
+      social_media: contact.socialMedia
     }])
     .select()
     .single();
@@ -48,7 +50,9 @@ export const updateContact = async (id: string, contact: Partial<Contact>) => {
       email: contact.email,
       phone: contact.phone,
       address: contact.address,
-      notes: contact.notes
+      notes: contact.notes,
+      birthday: contact.birthday,
+      social_media: contact.socialMedia
     })
     .eq('id', id)
     .select()
@@ -87,6 +91,8 @@ function formatContact(data: any): Contact {
     phone: data.phone,
     address: data.address,
     notes: data.notes,
+    birthday: data.birthday,
+    socialMedia: data.social_media,
     createdAt: data.created_at,
     updatedAt: data.updated_at,
   };

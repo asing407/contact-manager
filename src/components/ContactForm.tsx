@@ -1,6 +1,6 @@
 
 import { useState } from "react";
-import { ContactFormData } from "@/types/contact";
+import { ContactFormData, SocialMedia } from "@/types/contact";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -21,6 +21,13 @@ export function ContactForm({ initialData, onSubmit, className }: ContactFormPro
       phone: "",
       address: "",
       notes: "",
+      birthday: "",
+      socialMedia: {
+        linkedin: "",
+        twitter: "",
+        facebook: "",
+        instagram: ""
+      }
     }
   );
 
@@ -54,6 +61,16 @@ export function ContactForm({ initialData, onSubmit, className }: ContactFormPro
     if (validateForm()) {
       onSubmit(formData);
     }
+  };
+
+  const handleSocialMediaChange = (platform: keyof SocialMedia, value: string) => {
+    setFormData({
+      ...formData,
+      socialMedia: {
+        ...formData.socialMedia,
+        [platform]: value
+      }
+    });
   };
 
   return (
@@ -101,12 +118,68 @@ export function ContactForm({ initialData, onSubmit, className }: ContactFormPro
       </div>
 
       <div className="space-y-2">
+        <Label htmlFor="birthday">Birthday</Label>
+        <Input
+          id="birthday"
+          type="date"
+          value={formData.birthday}
+          onChange={(e) => setFormData({ ...formData, birthday: e.target.value })}
+        />
+      </div>
+
+      <div className="space-y-2">
         <Label htmlFor="address">Address (Optional)</Label>
         <Input
           id="address"
           value={formData.address}
           onChange={(e) => setFormData({ ...formData, address: e.target.value })}
         />
+      </div>
+
+      <div className="space-y-4">
+        <Label>Social Media (Optional)</Label>
+        <div className="grid gap-4">
+          <div>
+            <Label htmlFor="linkedin">LinkedIn</Label>
+            <Input
+              id="linkedin"
+              type="url"
+              placeholder="https://linkedin.com/in/username"
+              value={formData.socialMedia?.linkedin || ""}
+              onChange={(e) => handleSocialMediaChange("linkedin", e.target.value)}
+            />
+          </div>
+          <div>
+            <Label htmlFor="twitter">Twitter</Label>
+            <Input
+              id="twitter"
+              type="url"
+              placeholder="https://twitter.com/username"
+              value={formData.socialMedia?.twitter || ""}
+              onChange={(e) => handleSocialMediaChange("twitter", e.target.value)}
+            />
+          </div>
+          <div>
+            <Label htmlFor="facebook">Facebook</Label>
+            <Input
+              id="facebook"
+              type="url"
+              placeholder="https://facebook.com/username"
+              value={formData.socialMedia?.facebook || ""}
+              onChange={(e) => handleSocialMediaChange("facebook", e.target.value)}
+            />
+          </div>
+          <div>
+            <Label htmlFor="instagram">Instagram</Label>
+            <Input
+              id="instagram"
+              type="url"
+              placeholder="https://instagram.com/username"
+              value={formData.socialMedia?.instagram || ""}
+              onChange={(e) => handleSocialMediaChange("instagram", e.target.value)}
+            />
+          </div>
+        </div>
       </div>
 
       <div className="space-y-2">
