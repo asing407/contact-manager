@@ -74,7 +74,7 @@ export function ContactForm({ initialData, onSubmit, className }: ContactFormPro
   };
 
   return (
-    <form onSubmit={handleSubmit} className={cn("space-y-6", className)}>
+    <form onSubmit={handleSubmit} className={cn("space-y-4 max-h-[70vh] overflow-y-auto px-1", className)}>
       <div className="space-y-2">
         <Label htmlFor="fullName">Full Name</Label>
         <Input

@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Contact, ContactFormData } from "@/types/contact";
 import {
@@ -198,7 +197,7 @@ const Index = () => {
           </div>
 
           <Dialog open={isAddModalOpen} onOpenChange={setIsAddModalOpen}>
-            <DialogContent className="sm:max-w-[425px] enhanced-card">
+            <DialogContent className="sm:max-w-[425px] enhanced-card max-h-[90vh] overflow-hidden">
               <DialogHeader>
                 <DialogTitle className="text-center">Add New Contact</DialogTitle>
               </DialogHeader>
@@ -207,7 +206,7 @@ const Index = () => {
           </Dialog>
 
           <Dialog open={isEditModalOpen} onOpenChange={setIsEditModalOpen}>
-            <DialogContent className="sm:max-w-[425px] enhanced-card">
+            <DialogContent className="sm:max-w-[425px] enhanced-card max-h-[90vh] overflow-hidden">
               <DialogHeader>
                 <DialogTitle className="text-center">Edit Contact</DialogTitle>
               </DialogHeader>
@@ -219,6 +218,8 @@ const Index = () => {
                     phone: selectedContact.phone,
                     address: selectedContact.address,
                     notes: selectedContact.notes,
+                    birthday: selectedContact.birthday,
+                    socialMedia: selectedContact.socialMedia,
                   }}
                   onSubmit={handleEditContact}
                 />
