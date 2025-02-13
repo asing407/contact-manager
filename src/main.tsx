@@ -26,12 +26,12 @@ if (!container) {
 const root = createRoot(container);
 
 root.render(
-  <BrowserRouter>
-    <QueryClientProvider client={queryClient}>
-      <ThemeProvider defaultTheme="system" enableSystem>
+  <QueryClientProvider client={queryClient}>
+    <ThemeProvider defaultTheme="system" enableSystem>
+      <BrowserRouter>
         <App />
         <Toaster position="bottom-right" />
-      </ThemeProvider>
-    </QueryClientProvider>
-  </BrowserRouter>
+      </BrowserRouter>
+    </ThemeProvider>
+  </QueryClientProvider>
 );
